@@ -1,36 +1,35 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Rapha쬠נGraffle</title>       
-	<style>
-	svg{
-		background:#F5F5F5;
-	}
-	</style>
-	<script src="raphael.js" type="text/javascript" charset="utf-8"></script>
-	<script src="graffle.js" type="text/javascript" charset="utf-8"></script>
-	
+<!DOCTYPE html>
+<html>
+<head>	
+	<title>Digital Circuit Maker</title>  
+	<link rel="stylesheet" href="css/custom.css" />
 </head>
 <body>
-	<button class="btn and-gate">AND</button>
-	<button class="btn or-gate">OR</button>
-	<button class="btn not-gate">NOT</button>
 	
 	
 	<button class="btn switch">Switch</button>
 	<button class="btn wire">Wire</button>
-	<button class="btn bulb">Switch</button>
-	
-	
-	
+	<button class="btn bulb">Bulb</button>	
 	<button class="btn run">RUN</button>
 	<button class="btn stop">STOP</button>
+	<hr>
+	<button class="btn create-gate" gatetype='AND'>AND</button>
+	<button class="btn create-gate" gatetype='OR'>OR</button>
+	<button class="btn create-gate" gatetype='NOT'>NOT</button>
+	<button class="btn create-gate" gatetype='NAND'>NAND</button>
+	<button class="btn create-gate" gatetype='NOR'>NOR</button>
+	<!--<button class="btn create-gate" gatetype='XOR'>XOR</button>-->
+	
+	
+	
+	
 	<div id="holder"></div>
 	
-	<script src="jquery-2.1.1.min.js"></script>
 	
-	<script src="logicgates.js"></script>
-	<script src="controller.js"></script>
+	<script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
+	<script src="js/raphael.js" type="text/javascript" ></script>
+	<script src="js/graffle.js" type="text/javascript" ></script>	
+	<script src="js/logicgates.js" type="text/javascript"></script>
+	<script src="js/controller.js" type="text/javascript"></script>
 </body>
 </html>
