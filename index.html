@@ -10,8 +10,10 @@
 	<button class="btn switch">Switch</button>
 	<button class="btn wire">Wire</button>
 	<button class="btn bulb">Bulb</button>	
+	
 	<button class="btn run">RUN</button>
 	<button class="btn stop">STOP</button>
+	<input type="range" min="0" max="1000" step=="10" id="simspeed" value="900">
 	<hr>
 	<button class="btn create-gate" gatetype='AND'>AND</button>
 	<button class="btn create-gate" gatetype='OR'>OR</button>
@@ -29,7 +31,8 @@
 	<script src="js/jquery-2.1.1.min.js" type="text/javascript"></script>
 	<script src="js/raphael.js" type="text/javascript" ></script>
 	<script src="js/graffle.js" type="text/javascript" ></script>	
-	<script src="js/logicgates.js" type="text/javascript"></script>
+	<script src="js/logicgates-core.js" type="text/javascript"></script>
+	<script src="js/logicgates-contruct.js" type="text/javascript"></script>
 	<script src="js/controller.js" type="text/javascript"></script>
 </body>
 </html>

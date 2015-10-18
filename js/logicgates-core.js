@@ -81,10 +81,7 @@
 			return this;
 		};
 	};	
-	inherit(NOR, GATE);
-	
-	
-	
+	inherit(NOR, GATE);	
 	
 	var NOT = function(){
 		GATE.call(this);
@@ -104,15 +101,15 @@
 		'NOR':function(){return new NOR()}
 	};
 	
-	var createGate = function(name){
+	var getGate = function(name){
 		return gateMap[name]();
 	};	
 	
-	window.dl = {
-		createGate:createGate,	
-		createWire:function(){return new WIRE()},
-		createSwitch:function(){return new SWITCH()},
-		createBulb:function(){return new BULB()}
+	window.dlcore = {
+		getGate:getGate,	
+		getWire:function(){return new WIRE()},
+		getSwitch:function(){return new SWITCH()},
+		getBulb:function(){return new BULB()}
 	};	
 }());
 
