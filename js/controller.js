@@ -39,11 +39,11 @@ $('#fileopen').change(function(){
   var fileReader = new FileReader();
   fileReader.onload = function(fileLoadedEvent) {
     var textFromFileLoaded = fileLoadedEvent.target.result;   
-	 eval(textFromFileLoaded);
+	 dl.executeCode(textFromFileLoaded);
   };
   fileReader.readAsText(fileToLoad, "UTF-8");
 });
 
 $('.example').click(function(e){	
-	examples[this.id]();
+	dl.executeCode(examples[this.id]());
 });

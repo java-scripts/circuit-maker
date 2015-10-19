@@ -171,26 +171,39 @@
 		return component;
 	};
 	
-	var write = function(uicomponent){
+	var code = function(uicomponent){
 		$.extend(uicomponent.settings,getPosition(uicomponent));
 		return ['dl.createComponent(',JSON.stringify(uicomponent.settings),');'].join('');		
 	};
 	
 	
 	
-	var writeAll = function(){
+	var getCode = function(){
 		var str='';
 		$.each(components,function(i,c){
-			str+='\n'+write(c.ui);
+			str+=code(c.ui);
 		});		
 		$.each(wires,function(i,w){
 			var from = components.indexOf(w.ui.from.component);	
 			var fromPin = w.ui.from.pinIndex;
 			var to = components.indexOf(w.ui.to.component);	
 			var toPin = w.ui.to.pinIndex;
-			str+='\n'+'dl.createWire(dl.components['+from+'].getPin('+fromPin+'),dl.components['+to+'].getPin('+toPin+'));';
+			str+='dl.createWire(dl.components['+from+'].getPin('+fromPin+'),dl.components['+to+'].getPin('+toPin+'));';
 		});		
 		return str;
+	};
+	
+	
+	var clean = function(){		
+		r.clear();
+		connections=[];tempwire={};;
+		wires=[];dl.wires=wires;
+		components=[];dl.components=components;
+	};
+	
+	
+	var executeCode = function(code){
+		clean();eval(code);		
 	};
 	
 	
@@ -239,11 +252,12 @@
 		stopSim:stopSim,
 		setPosition:setPosition,
 		createComponent:createComponent,
-		createWire:createWire,
-		write:write,
-		writeAll:writeAll,
+		createWire:createWire,		
+		getCode:getCode,
 		wires:wires,
-		components:components		
+		components:components,
+		clean:clean,
+		executeCode:executeCode
 	};
 
 }());
