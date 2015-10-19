@@ -1,3 +1,40 @@
+
+.feed-carousel{
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+div.feed-carousel-shelf{
+    position: relative;
+    left: 0px;
+	/*cursor:move;*/
+}
+
+div.feed-carousel-shelf li{
+	display:inline;
+}
+
+
+div.feed-carousel-shelf li>div{
+	display:inline-block;
+}
+
+.feed-carousel .left,.feed-carousel .right{
+	position:relative;
+	top:-100px;
+}
+
+
+/* new line for digital logic*/
 svg{
 		background:#F5F5F5;
+		box-shadow:inset 5px 5px 5px;
 	}
+
+.gate-cart{
+	padding:20px;
+}
+
+.gate-cart .gate{
+	cursor:move;
+}
