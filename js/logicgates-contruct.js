@@ -64,22 +64,45 @@
 	};
 	
 	
+	var getPinSet = function(gateType,b,p){
+		var pins2x1 =  [
+			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
+			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
+			{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
+			];
+		var pins1x1 = [
+				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
+				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
+			];
+		var pin2x2 = [
+			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
+			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
+			{x:b.w,y:b.h/5,pinType:'out',pinId:2},
+			{x:b.w,y:3*b.h/5,pinType:'out',pinId:3},
+		];	
+			
+			
+		var pinset={
+		'AND':pins2x1,
+		'OR':pins2x1,
+		'NAND':pins2x1,
+		'NOR':pins2x1,
+		'NOT':pins1x1,
+		'RSFF':pin2x2
+		};
+		
+		return pinset[gateType];		
+	};
+	
+	
+	
+	
 	var createGate = function(gatetype){	
 		var component = dlcore.getGate(gatetype);	
 		var color = Raphael.getColor();	
 		var b={x:0,y:0,w:60,h:50,r:5};
 		var p={w:20,h:10,r:0};		
-		var pinpositions =[
-			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
-			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
-			{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
-			];
-		if(gatetype=='NOT'){
-			pinpositions =[
-				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
-				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
-			];
-		}		
+		var pinpositions =getPinSet(gatetype,b,p);		
 		var group=[];
 		$.each(pinpositions,function(i,pos){
 			var pin = r.rect(b.x+pos.x, b.y+pos.y, p.w, p.h, p.r);
