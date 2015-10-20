@@ -96,13 +96,32 @@
 	};
 	util.inherit(NOT, Component);
 	
+		
+	var RSFF = function(){
+		Component.call(this);
+		this.update = function(){
+			var r = this.pins[0][0].state;
+			var s = this.pins[1][0].state;
+			
+			var q = this.pins[2];
+			var qq = this.pins[3];
+			
+			this.state = r&&s;
+							
+			util.updateAllWiresAtOutput(q, this.state);		
+			return this;
+		};	
+	};
+	util.inherit(RSFF, Component);
+	
 	
 	var gateMap = {
 		'AND':function(){return new AND()},
 		'OR':function(){return new OR()},
 		'NOT':function(){return new NOT()},
 		'NAND':function(){return new NAND()},
-		'NOR':function(){return new NOR()}
+		'NOR':function(){return new NOR()},
+		'RSFF':function(){return new AND()},
 	};
 	
 	var getGate = function(name){
