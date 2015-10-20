@@ -52,12 +52,8 @@
 		var w = dlcore.getWire();
 		w.ui = wireConnection;
 		//connecting 			
-		$.each([pin1,pin2],function(i,node){			
-			if(node.pinType=='out'){
-				node.component.output.push(w);
-			}else{
-				node.component.inputs.push(w);
-			}
+		$.each([pin1,pin2],function(i,node){
+			node.component.link(w, node.pinId);			
 		});	
 		wires.push(w);
 	};
@@ -74,14 +70,14 @@
 		var b={x:0,y:0,w:60,h:50,r:5};
 		var p={w:20,h:10,r:0};		
 		var pinpositions =[
-			{x:-p.w,y:b.h/5,pinType:'in'},
-			{x:-p.w,y:3*b.h/5,pinType:'in'},
-			{x:b.w,y:2*b.h/5,pinType:'out'}
+			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
+			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
+			{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
 			];
 		if(gatetype=='NOT'){
 			pinpositions =[
-				{x:-p.w,y:2*b.h/5,pinType:'in'},
-				{x:b.w,y:2*b.h/5,pinType:'out'}
+				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
+				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
 			];
 		}		
 		var group=[];
@@ -92,7 +88,7 @@
 			pin.mouseup(mouseuponpin);		
 			pin.component=component;	
 			pin.pinType=pos.pinType;
-			pin.pinIndex = i;
+			pin.pinId = pos.pinId;
 		});	
 		var body=r.image("img/"+gatetype+".png", b.x, b.y, b.w, b.h);
 		body.group=group;	
@@ -116,7 +112,7 @@
 			pin.attr({fill: 'black', stroke: 'black', "fill-opacity": 0, "stroke-width": 2, cursor: 'crosshair' });
 			pin.mouseup(mouseuponpin);		
 			pin.component=component;	
-			pin.pinType=pos.pinType;pin.pinIndex = 0;
+			pin.pinType=pos.pinType;pin.pinId = 0;
 			group.push({node:pin,p:pos});
 		var body=r.rect(b.x, b.y, b.w, b.h, b.r);	
 		body.group=group;	
@@ -139,7 +135,7 @@
 			pin.attr({fill: 'black', stroke: 'black', "fill-opacity": 0, "stroke-width": 2, cursor: 'crosshair' });
 			pin.mouseup(mouseuponpin);		
 			pin.component=component;	
-			pin.pinType=pos.pinType;pin.pinIndex = 0;
+			pin.pinType=pos.pinType;pin.pinId = 0;
 			group.push({node:pin,p:pos});
 		//var body=r.rect(b.x, b.y, b.w, b.h, b.r);	
 		
@@ -185,9 +181,9 @@
 		});		
 		$.each(wires,function(i,w){
 			var from = components.indexOf(w.ui.from.component);	
-			var fromPin = w.ui.from.pinIndex;
+			var fromPin = w.ui.from.pinId;
 			var to = components.indexOf(w.ui.to.component);	
-			var toPin = w.ui.to.pinIndex;
+			var toPin = w.ui.to.pinId;
 			str+='dl.createWire(dl.components['+from+'].getPin('+fromPin+'),dl.components['+to+'].getPin('+toPin+'));';
 		});		
 		return str;
@@ -227,16 +223,17 @@
 		//console.log('running.....');
 		$.each(components,function(i,component){
 			component.update();
-			$.each(component.output||[],function(j,wire){			
-				wire.state = component.state;
-			});
+			//if component has a ui, update its ui
 			if(component.ui){
 				component.state?component.ui.attr({'fill-opacity':1}):component.ui.attr({'fill-opacity':0});
 			}
 		});
+		
+		//update wire ui
 		$.each(wires,function(i,w){
 			w.state?w.ui.line.attr({stroke: 'red'}):w.ui.line.attr({stroke: 'blue'});
 		});
+		
 		simref = setTimeout(runSimulation,simspeed);
 	};
 
