@@ -1,96 +1,100 @@
 (function(){
-	var WIRE = function(){		
-		this.state=false;		
+
+	var util={
+		updateAllWiresAtOutput:function(output, state){		
+			for(var i in output){
+				output[i].state = state;
+			}
+		},
+		inherit:function(child, parent){
+			child.prototype = Object.create(parent.prototype);
+			child.prototype.constructor = child;
+		}
 	};
 	
-	var SWITCH = function(){
-		this.output=[];
+	
+	var WIRE = function(){		
+		this.state=false;		
+	};	
+	
+	var Component = function(){		
+		this.pins={};//each input holds array of wires		
 		this.state=false;
+		this.link = function(wire, pinId){			
+			if(!this.pins[pinId]){this.pins[pinId]=[]};
+			this.pins[pinId].push(wire);			
+		}
+	};	
+	
+	var SWITCH = function(){
+		Component.call(this);
 		this.toggle=function(){
 			this.state=!this.state;return this;
 		}
-		this.update = function(){};
-	};
-	
-	var BULB = function(){
-		this.inputs=[];//wire
-		this.state=false;
 		this.update = function(){
-			this.state = this.inputs[0].state;
+			util.updateAllWiresAtOutput(this.pins[0], this.state);			
 		};
 	};
+	util.inherit(SWITCH, Component);
 	
-	var GATE = function(){		
-		this.inputs=[];//1 wire per input
-		this.output=[];//wires
-		this.state=false;						
-	};	
-	var inherit = function(child, parent){
-		child.prototype = Object.create(parent.prototype);
-		child.prototype.constructor = child;
+	var BULB = function(){
+		Component.call(this);
+		this.update = function(){
+			this.state = this.pins[0][0].state;
+		};
 	};
-		
+	util.inherit(BULB, Component);	
 	
 	var OR = function(){
-		GATE.call(this);
-		this.update = function(){
-			this.state = this.inputs[0].state;
-			for(var i=1;i<this.inputs.length;i++){
-				this.state=this.state||this.inputs[i].state;
-			}				
+		Component.call(this);
+		this.update = function(){			
+			this.state=this.pins[0][0].state||this.pins[1][0].state;					
+			util.updateAllWiresAtOutput(this.pins[2], this.state);		
 			return this;
 		};
 	};	
-	inherit(OR, GATE);
-	
+	util.inherit(OR, Component);	
 	
 	var AND = function(){
-		GATE.call(this);
+		Component.call(this);
 		this.update = function(){
-			this.state = this.inputs[0].state;
-			for(var i=1;i<this.inputs.length;i++){
-				this.state=this.state&&this.inputs[i].state;
-			}			
+			this.state=this.pins[0][0].state&&this.pins[1][0].state;					
+			util.updateAllWiresAtOutput(this.pins[2], this.state);			
 			return this;
 		};
 	};		
-	inherit(AND, GATE);
+	util.inherit(AND, Component);
 	
 	var NAND = function(){
-		GATE.call(this);
+		Component.call(this);
 		this.update = function(){
-			this.state = this.inputs[0].state;
-			for(var i=1;i<this.inputs.length;i++){
-				this.state=this.state&&this.inputs[i].state;
-			}
-			this.state = !this.state;//NOT
+			this.state=!(this.pins[0][0].state&&this.pins[1][0].state);					
+			util.updateAllWiresAtOutput(this.pins[2], this.state);		
 			return this;
 		};	
 	};
-	inherit(NAND, GATE);
+	util.inherit(NAND, Component);
 	
 	
 	var NOR = function(){
-		GATE.call(this);
+		Component.call(this);
 		this.update = function(){
-			this.state = this.inputs[0].state;
-			for(var i=1;i<this.inputs.length;i++){
-				this.state=this.state||this.inputs[i].state;
-			}
-			this.state = !this.state;//NOT
+			this.state=!(this.pins[0][0].state||this.pins[1][0].state);					
+			util.updateAllWiresAtOutput(this.pins[2], this.state);		
 			return this;
 		};
 	};	
-	inherit(NOR, GATE);	
+	util.inherit(NOR, Component);	
 	
 	var NOT = function(){
-		GATE.call(this);
+		Component.call(this);
 		this.update = function(){
-			this.state = !this.inputs[0].state;				
+			this.state = !this.pins[0][0].state;				
+			util.updateAllWiresAtOutput(this.pins[1], this.state);		
 			return this;
 		};
 	};
-	inherit(NOT, GATE);
+	util.inherit(NOT, Component);
 	
 	
 	var gateMap = {
