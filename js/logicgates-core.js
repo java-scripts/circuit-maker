@@ -100,19 +100,80 @@
 	var RSFF = function(){
 		Component.call(this);
 		this.update = function(){
-			var r = this.pins[0][0].state;
-			var s = this.pins[1][0].state;
-			
-			var q = this.pins[2];
-			var qq = this.pins[3];
-			
-			this.state = r&&s;
-							
-			util.updateAllWiresAtOutput(q, this.state);		
+			var q1 = this.pins[2];//output node
+			var q2 = this.pins[3];//output node
+			//clk input is true if not connected
+			var clk = this.pins[4]?this.pins[4][0].state:true;
+			var s = this.pins[0][0].state;
+			var r = this.pins[1][0].state;
+			var q = this.state;//current state
+			if(clk){q=s||(q&&!r);}//Q(next) = S+QR'		
+			this.state=q;//updated state				
+			util.updateAllWiresAtOutput(q1, q);		
+			util.updateAllWiresAtOutput(q2, !q);		
 			return this;
 		};	
 	};
 	util.inherit(RSFF, Component);
+	
+	var JKFF = function(){
+		Component.call(this);
+		this.update = function(){
+			var q1 = this.pins[2];//output node
+			var q2 = this.pins[3];//output node
+			//clk input is true if not connected
+			var clk = this.pins[4]?this.pins[4][0].state:true;
+			var j = this.pins[0][0].state;
+			var k = this.pins[1][0].state;
+			var q = this.state;//current state
+			if(clk){q=(j&&!q)||(!k&&q);}//Q(next) = JQ' + K'Q	
+			this.state=q;//updated state				
+			util.updateAllWiresAtOutput(q1, q);		
+			util.updateAllWiresAtOutput(q2, !q);
+			return this;
+		};	
+	};
+	util.inherit(JKFF, Component);
+	
+	var DFF = function(){
+		Component.call(this);
+		this.update = function(){
+			var q1 = this.pins[2];//output node
+			var q2 = this.pins[3];//output node
+			//clk input is true if not connected
+			var clk = this.pins[4]?this.pins[4][0].state:true;			
+			var d = this.pins[0][0].state;
+			//var r = this.pins[1][0].state;
+			var q = this.state;//current state
+			if(this.clk && !clk){q=d;}//Q(next) = D	on falling edge		
+			this.state=q;//updated state
+			this.clk =clk;//updating clock
+			util.updateAllWiresAtOutput(q1, q);		
+			util.updateAllWiresAtOutput(q2, !q);	
+			return this;
+		};	
+	};
+	util.inherit(DFF, Component);
+	
+	
+	var TFF = function(){
+		Component.call(this);
+		this.update = function(){
+			var q1 = this.pins[2];//output node
+			var q2 = this.pins[3];//output node
+			//clk input is true if not connected
+			var clk = this.pins[4]?this.pins[4][0].state:true;
+			var t = this.pins[0][0].state;
+			//var r = this.pins[1][0].state;
+			var q = this.state;//current state
+			if(clk){q=(t&&!q)||(!t&&q);}//Q(next) = TQ' + T'Q
+			this.state=q;//updated state				
+			util.updateAllWiresAtOutput(q1, q);		
+			util.updateAllWiresAtOutput(q2, !q);	
+			return this;
+		};	
+	};
+	util.inherit(TFF, Component);
 	
 	
 	var gateMap = {
@@ -121,7 +182,10 @@
 		'NOT':function(){return new NOT()},
 		'NAND':function(){return new NAND()},
 		'NOR':function(){return new NOR()},
-		'RSFF':function(){return new AND()},
+		'RSFF':function(){return new RSFF()},
+		'JKFF':function(){return new JKFF()},
+		'DFF':function(){return new DFF()},
+		'TFF':function(){return new TFF()}
 	};
 	
 	var getGate = function(name){

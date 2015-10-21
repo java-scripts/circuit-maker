@@ -64,7 +64,7 @@
 	};
 	
 	
-	var getPinSet = function(gateType,b,p){
+	var getDim = function(gateType,b,p){
 		var pins2x1 =  [
 			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
 			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
@@ -74,11 +74,12 @@
 				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
 				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
 			];
-		var pin2x2 = [
-			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
-			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
-			{x:b.w,y:b.h/5,pinType:'out',pinId:2},
-			{x:b.w,y:3*b.h/5,pinType:'out',pinId:3},
+		var pin2x2x1 = [
+			{x:-p.w,y:0.1*b.h/5,pinType:'in',pinId:0},
+			{x:-p.w,y:3.9*b.h/5,pinType:'in',pinId:1},
+			{x:b.w,y:0.1*b.h/5,pinType:'out',pinId:2},
+			{x:b.w,y:3.9*b.h/5,pinType:'out',pinId:3},
+			{x:-p.w,y:2*b.h/5,pinType:'clk',pinId:4}
 		];	
 			
 			
@@ -88,7 +89,10 @@
 		'NAND':pins2x1,
 		'NOR':pins2x1,
 		'NOT':pins1x1,
-		'RSFF':pin2x2
+		'RSFF':pin2x2x1,
+		'JKFF':pin2x2x1,
+		'DFF':pin2x2x1,
+		'TFF':pin2x2x1
 		};
 		
 		return pinset[gateType];		
@@ -100,9 +104,9 @@
 	var createGate = function(gatetype){	
 		var component = dlcore.getGate(gatetype);	
 		var color = Raphael.getColor();	
-		var b={x:0,y:0,w:60,h:50,r:5};
+		var b={x:0,y:0,w:60,h:60,r:5};
 		var p={w:20,h:10,r:0};		
-		var pinpositions =getPinSet(gatetype,b,p);		
+		var pinpositions =getDim(gatetype,b,p);		
 		var group=[];
 		$.each(pinpositions,function(i,pos){
 			var pin = r.rect(b.x+pos.x, b.y+pos.y, p.w, p.h, p.r);
