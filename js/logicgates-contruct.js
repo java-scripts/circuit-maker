@@ -68,27 +68,56 @@
 		var b={x:0,y:0,w:60,h:60,r:5};
 		var p={w:20,h:10,r:0};		
 		
-		var inputPin =[{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0}];
-		var outputPin = [{x:b.w,y:2*b.h/5,pinType:'out',pinId:0}];			
-		var pins2x1 =  [
-			{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
-			{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
-			{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
-			];			
-		var pins1x1 = [
+		
+		
+		
+		var inputPin = function(b,p){
+			return [{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0}];
+		};		
+		var outputPin = function(b,p){
+			return [{x:b.w,y:2*b.h/5,pinType:'out',pinId:0}];	
+		};		
+		var pins2x1 =  function(b,p){
+			return [
+				{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
+				{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
+				{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
+			];	
+		};		
+		var pins1x1 = function(b,p){
+			return [
 				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
 				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
-			];			
-		var pin2x2x1 = [
-			{x:-p.w,y:0.1*b.h/5,pinType:'in',pinId:0},
-			{x:-p.w,y:3.9*b.h/5,pinType:'in',pinId:1},
-			{x:b.w,y:0.1*b.h/5,pinType:'out',pinId:2},
-			{x:b.w,y:3.9*b.h/5,pinType:'out',pinId:3},
-			{x:-p.w,y:2*b.h/5,pinType:'clk',pinId:4}
-		];		
-		var pin10x3x1 = [
-			//{x:-p.w,y:0,pinType:'out',pinId:0}		
-		];		
+			];
+		};			
+		var pin2x2x1 = function(b,p){
+			return [
+				{x:-p.w,y:0.1*b.h/5,pinType:'in',pinId:0},
+				{x:-p.w,y:3.9*b.h/5,pinType:'in',pinId:1},
+				{x:b.w,y:0.1*b.h/5,pinType:'out',pinId:2},
+				{x:b.w,y:3.9*b.h/5,pinType:'out',pinId:3},
+				{x:-p.w,y:2*b.h/5,pinType:'clk',pinId:4}
+			];
+		};		
+		var pin10x3x1 = function(b,p){
+			return [
+				{x:-p.w+b.w*0.1,y:-p.h,pinType:'out',pinId:0},
+				{x:-p.w+b.w*0.2,y:-p.h,pinType:'out',pinId:1},
+				{x:-p.w+b.w*0.3,y:-p.h,pinType:'out',pinId:2},
+				{x:-p.w+b.w*0.4,y:-p.h,pinType:'out',pinId:3},
+				{x:-p.w+b.w*0.5,y:-p.h,pinType:'out',pinId:4},
+				{x:-p.w+b.w*0.6,y:-p.h,pinType:'out',pinId:5},
+				{x:-p.w+b.w*0.7,y:-p.h,pinType:'out',pinId:6},
+				{x:-p.w+b.w*0.8,y:-p.h,pinType:'out',pinId:7},
+				{x:-p.w+b.w*0.9,y:-p.h,pinType:'out',pinId:8},
+				{x:-p.w+b.w*1.0,y:-p.h,pinType:'out',pinId:9},
+				{x:-p.w,y:b.h/2-p.h/2,pinType:'in',pinId:10},//clk
+				{x:-p.w+b.w*0.1,y:b.h,pinType:'out',pinId:11},//enable
+				{x:-p.w+b.w*0.3,y:b.h,pinType:'out',pinId:12},//reset
+				{x:-p.w+b.w*0.6,y:b.h,pinType:'out',pinId:13}//carryout				
+			];	
+		};	
+				
 		var config={
 			'BULB':{pins:inputPin,p:p,b:b},
 			'SWITCH':{pins:outputPin,p:p,b:b},
@@ -103,8 +132,10 @@
 			'DFF':{pins:pin2x2x1,p:p,b:b},
 			'TFF':{pins:pin2x2x1,p:p,b:b},
 			'4017':{pins:pin10x3x1,p:{w:10,h:20,r:0},b:{x:0,y:0,w:120,h:60,r:5}}
-		};		
-		return config[gateType];		
+		};
+		
+		var c = config[gateType];	c.pins = c.pins(c.b,c.p);
+		return c;		
 	};
 	
 	
