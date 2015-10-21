@@ -172,8 +172,19 @@
 			return this;
 		},
 		'4017':function(){
-		
-		
+			//pins outputs 0-9, clk:10, enable:11, reset:12, carryout:13
+			var q1 = this.pins[0];//output node
+			var q2 = this.pins[1];//output node		
+			var clk = this.pins[10]?this.pins[10][0].state:true;			
+			if(!this.counter)this.counter=0;				
+			if(this.clk && !clk){//falling edge
+				for(var i=0;i<10;i++){
+					util.opdateOutputWires(this.pins[i], this.counter==i);
+				}
+				this.counter = (this.counter+1)%10;				
+			}			
+			this.clk =clk;//updating clock						
+			return this;	
 		}		
 	};		
 	var componentRegister={
@@ -191,3 +202,6 @@
 		}		
 	};	
 }());
+
+
+
