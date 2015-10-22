@@ -63,34 +63,27 @@
 		return this.ui.group[index||0].node;
 	};
 	
-	
-	var getPinConfig = function(gateType){	
-		var b={x:0,y:0,w:60,h:60,r:5};
-		var p={w:20,h:10,r:0};		
-		
-		
-		
-		
-		var inputPin = function(b,p){
+	var pp={
+		inputPin:function(b,p){
 			return [{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0}];
-		};		
-		var outputPin = function(b,p){
+		},
+		outputPin:function(b,p){
 			return [{x:b.w,y:2*b.h/5,pinType:'out',pinId:0}];	
-		};		
-		var pins2x1 =  function(b,p){
+		},		
+		pins2x1:function(b,p){
 			return [
 				{x:-p.w,y:b.h/5,pinType:'in',pinId:0},
 				{x:-p.w,y:3*b.h/5,pinType:'in',pinId:1},
 				{x:b.w,y:2*b.h/5,pinType:'out',pinId:2}
 			];	
-		};		
-		var pins1x1 = function(b,p){
+		},
+		pins1x1:function(b,p){
 			return [
 				{x:-p.w,y:2*b.h/5,pinType:'in',pinId:0},
 				{x:b.w,y:2*b.h/5,pinType:'out',pinId:1}
 			];
-		};			
-		var pin2x2x1 = function(b,p){
+		},		
+		pin2x2x1:function(b,p){
 			return [
 				{x:-p.w,y:0.1*b.h/5,pinType:'in',pinId:0},
 				{x:-p.w,y:3.9*b.h/5,pinType:'in',pinId:1},
@@ -98,8 +91,8 @@
 				{x:b.w,y:3.9*b.h/5,pinType:'out',pinId:3},
 				{x:-p.w,y:2*b.h/5,pinType:'clk',pinId:4}
 			];
-		};		
-		var pin10x3x1 = function(b,p){
+		},	
+		pin10x3x1:function(b,p){
 			return [
 				{x:-p.w+b.w*0.1,y:-p.h,pinType:'out',pinId:0},
 				{x:-p.w+b.w*0.2,y:-p.h,pinType:'out',pinId:1},
@@ -116,22 +109,29 @@
 				{x:-p.w+b.w*0.3,y:b.h,pinType:'out',pinId:12},//reset
 				{x:-p.w+b.w*0.6,y:b.h,pinType:'out',pinId:13}//carryout				
 			];	
-		};	
-				
+		}
+	};	
+	
+	var getPinConfig = function(gateType){	
+		
+		var b={x:0,y:0,w:60,h:60,r:5};
+		var p={w:20,h:10,r:0};	
+		var ffp={w:10,h:10,r:0};
+		var icb={x:0,y:0,w:120,h:60,r:5};
 		var config={
-			'BULB':{pins:inputPin,p:p,b:b},
-			'SWITCH':{pins:outputPin,p:p,b:b},
-			'PULSER':{pins:outputPin,p:p,b:b},
-			'AND':{pins:pins2x1,p:p,b:b},
-			'OR':{pins:pins2x1,p:p,b:b},
-			'NAND':{pins:pins2x1,p:p,b:b},
-			'NOR':{pins:pins2x1,p:p,b:b},
-			'NOT':{pins:pins1x1,p:p,b:b},
-			'RSFF':{pins:pin2x2x1,p:p,b:b},
-			'JKFF':{pins:pin2x2x1,p:p,b:b},
-			'DFF':{pins:pin2x2x1,p:p,b:b},
-			'TFF':{pins:pin2x2x1,p:p,b:b},
-			'4017':{pins:pin10x3x1,p:{w:10,h:20,r:0},b:{x:0,y:0,w:120,h:60,r:5}}
+			'BULB':{pins:pp.inputPin,p:p,b:b},
+			'SWITCH':{pins:pp.outputPin,p:p,b:b},
+			'PULSER':{pins:pp.outputPin,p:p,b:b},
+			'AND':{pins:pp.pins2x1,p:p,b:b},
+			'OR':{pins:pp.pins2x1,p:p,b:b},
+			'NAND':{pins:pp.pins2x1,p:p,b:b},
+			'NOR':{pins:pp.pins2x1,p:p,b:b},
+			'NOT':{pins:pp.pins1x1,p:p,b:b},
+			'RSFF':{pins:pp.pin2x2x1,p:ffp,b:b},
+			'JKFF':{pins:pp.pin2x2x1,p:ffp,b:b},
+			'DFF':{pins:pp.pin2x2x1,p:ffp,b:b},
+			'TFF':{pins:pp.pin2x2x1,p:ffp,b:b},
+			'4017':{pins:pp.pin10x3x1,p:ffp,b:icb}
 		};
 		
 		var c = config[gateType];	c.pins = c.pins(c.b,c.p);
@@ -149,7 +149,7 @@
 		$.each(pinConfig.pins,function(i,pos){
 			var pin = r.rect(b.x+pos.x, b.y+pos.y, p.w, p.h, p.r);
 			group.push({node:pin,p:pos});
-			pin.attr({fill: 'black', stroke: 'black', "fill-opacity": 0, "stroke-width": 2, cursor: 'crosshair' });		
+			pin.attr({fill: 'black', stroke: 'black', "fill-opacity": 0, "stroke-width": 1, cursor: 'crosshair' });		
 			pin.mouseup(mouseuponpin);		
 			pin.component=component;	
 			pin.pinType=pos.pinType;
