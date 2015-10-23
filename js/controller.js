@@ -47,3 +47,18 @@ $('#fileopen').change(function(){
 $('.example').click(function(e){	
 	dl.executeCode(examples[this.id]());
 });
+
+
+$(document).contextmenu({
+	delegate: ".component",
+	preventContextMenuForPopup: true,
+	preventSelect: true,
+	taphold: true,
+	menu: [
+		{title: "Delete", cmd: "delete", uiIcon: "ui-icon-trash"}	
+	],		
+	select: function(event, ui) {		
+		var $target = ui.target;
+		$target.data('remove')();	
+	}
+});
