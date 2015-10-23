@@ -9,6 +9,17 @@
 	var mode=modes.CONSTRUCTMODE;
 	var simref,simspeed=100;
 
+	
+	var deleteAt = function(list, index){
+		if(index>-1){
+			list.splice(index,1);
+		}	
+	};
+	
+	var deleteItem = function(list, item){
+		deleteAt(list,list.indexOf(item));		
+	};
+	
 	var onstart = function () {
 		this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
 		this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
@@ -139,6 +150,9 @@
 	};
 	
 	
+	
+	
+	
 	var constructComponent = function(type, name){
 		var component = dlcore.createComponent(type,name);
 		var color = Raphael.getColor();			
@@ -159,9 +173,29 @@
 		body.group=group;	
 		body.attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
 		body.drag(moveTo, onstart, onend);	onstart.call(body);		
+		body.node.setAttribute('class','component');
 		body.node.onclick = function(){		
 			component.click();
-		};				
+		};
+		$(body.node).data({remove:function(){
+			stopSim();$('.stop').hide();$('.run').show();			
+			$.each(component.pins,function(i, pin){
+				$.each(pin,function(j,wire){
+					var from = wire.ui.from;var to = wire.ui.to;					
+					delete from.component.pins[from.pinId];//wire links
+					delete to.component.pins[to.pinId];//wire links			
+					console.log(from.component);
+					wire.ui.line.remove();//wire ui
+					deleteItem(connections,wire.ui);//wire connection	
+					deleteItem(wires,wire);//delete wire core					
+				});
+			});			
+			deleteItem(components,component);//delete component core;			
+			$.each(group,function(i,pin){//delete component ui pins
+				pin.node.remove();
+			});			
+			body.remove();//delete component ui pins body			
+		}});
 		component.afterUpdate=function(){				
 			component.state?body.attr({'src': 'img/'+name+'_1.png'}):body.attr({'src': 'img/'+name+'.png'});
 		};		
