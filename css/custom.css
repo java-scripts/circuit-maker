@@ -24,11 +24,20 @@ div.feed-carousel-shelf li>div{
 	top:-100px;
 }
 
+#holder{
+width: 100%;
+    height: 800px;    
+    position: absolute;
+	top:200px;
+	z-index:-1;
+}
+
 
 /* new line for digital logic*/
 svg{
 		background:#F5F5F5;
 		box-shadow:inset 5px 5px 5px;
+		    background-image: url('../img/grid.png');
 	}
 
 .gate-cart{
@@ -39,6 +48,9 @@ svg{
 	cursor:move;
 }
 
+.run, .stop{
+width: 100%;
+}
 
 .ui-menu {
     box-shadow: 5px 5px 5px #000;
@@ -55,4 +67,15 @@ svg{
 }
 .ui-state-focus{	
 	background: #609AC5;
+}
+
+ul.collapsible li{
+	background: rgba(0,90,90,0.5);
+}
+
+#components-dropdown{
+	width: 200px;
+    position: fixed;
+    top: 200px;
+    left: 80%;
 }

@@ -1,13 +1,13 @@
 (function(){
 
-	var r = Raphael("holder", 1200, 600);
+	var r = Raphael("holder", '100%', '100%');
 	var connections=[];
 	var tempwire={};
 	var components=[];
 	var wires=[];
 	var modes={CONSTRUCTMODE:'constructmode', WIREMODE:'wiremode',SIMMODE:'simmode'};
 	var mode=modes.CONSTRUCTMODE;
-	var simref,simspeed=100;
+	var simref,simspeed=50;
 
 	
 	var deleteAt = function(list, index){
@@ -67,6 +67,23 @@
 			node.component.link(w, node.pinId);			
 		});	
 		wires.push(w);
+		var wirenode = wireConnection.line.node;
+		wirenode.setAttribute('class','wire');
+		$(wirenode).data({remove:function(){
+			stopSim();$('.stop').hide();$('.run').show();			
+			deleteWire(w);					
+			executeCode(getCode());
+		}});
+		
+	};
+	
+	var deleteWire = function(wire){
+		var from = wire.ui.from;var to = wire.ui.to;					
+		delete from.component.pins[from.pinId];//wire links
+		delete to.component.pins[to.pinId];//wire links								
+		wire.ui.line.remove();//wire ui
+		deleteItem(connections,wire.ui);//wire connection	
+		deleteItem(wires,wire);//delete wire core	
 	};
 
 	
@@ -120,6 +137,26 @@
 				{x:-p.w+b.w*0.3,y:b.h,pinType:'out',pinId:12},//reset
 				{x:-p.w+b.w*0.6,y:b.h,pinType:'out',pinId:13}//carryout				
 			];	
+		},
+		pin7x7x1:function(b,p){
+			return [
+				{x:-p.w,y:b.h/2-p.h/2,pinType:'in',pinId:0},//clk
+				{x:-p.w+b.w*1/7,y:-p.h,pinType:'out',pinId:1},
+				{x:-p.w+b.w*2/7,y:-p.h,pinType:'out',pinId:2},
+				{x:-p.w+b.w*3/7,y:-p.h,pinType:'out',pinId:3},
+				{x:-p.w+b.w*4/7,y:-p.h,pinType:'out',pinId:4},
+				{x:-p.w+b.w*5/7,y:-p.h,pinType:'out',pinId:5},
+				{x:-p.w+b.w*6/7,y:-p.h,pinType:'out',pinId:6},
+				{x:-p.w+b.w*7/7,y:-p.h,pinType:'out',pinId:7},				
+				{x:-p.w+b.w*1/7,y:b.h,pinType:'out',pinId:8},
+				{x:-p.w+b.w*2/7,y:b.h,pinType:'out',pinId:9},
+				{x:-p.w+b.w*3/7,y:b.h,pinType:'out',pinId:10},
+				{x:-p.w+b.w*4/7,y:b.h,pinType:'out',pinId:11},
+				{x:-p.w+b.w*5/7,y:b.h,pinType:'out',pinId:12},
+				{x:-p.w+b.w*6/7,y:b.h,pinType:'out',pinId:13},
+				{x:-p.w+b.w*7/7,y:b.h,pinType:'out',pinId:14},
+				
+			];	
 		}
 	};	
 	
@@ -142,7 +179,9 @@
 			'JKFF':{pins:pp.pin2x2x1,p:ffp,b:b},
 			'DFF':{pins:pp.pin2x2x1,p:ffp,b:b},
 			'TFF':{pins:pp.pin2x2x1,p:ffp,b:b},
-			'4017':{pins:pp.pin10x3x1,p:ffp,b:icb}
+			'4017':{pins:pp.pin10x3x1,p:ffp,b:icb},
+			'4543':{pins:pp.pin7x7x1,p:ffp,b:icb},
+			'4520':{pins:pp.pin7x7x1,p:ffp,b:icb}
 		};
 		
 		var c = config[gateType];	c.pins = c.pins(c.b,c.p);
@@ -181,20 +220,15 @@
 			stopSim();$('.stop').hide();$('.run').show();			
 			$.each(component.pins,function(i, pin){
 				$.each(pin,function(j,wire){
-					var from = wire.ui.from;var to = wire.ui.to;					
-					delete from.component.pins[from.pinId];//wire links
-					delete to.component.pins[to.pinId];//wire links			
-					console.log(from.component);
-					wire.ui.line.remove();//wire ui
-					deleteItem(connections,wire.ui);//wire connection	
-					deleteItem(wires,wire);//delete wire core					
+					deleteWire(wire);				
 				});
 			});			
 			deleteItem(components,component);//delete component core;			
 			$.each(group,function(i,pin){//delete component ui pins
 				pin.node.remove();
 			});			
-			body.remove();//delete component ui pins body			
+			body.remove();//delete component ui pins body	
+			executeCode(getCode());
 		}});
 		component.afterUpdate=function(){				
 			component.state?body.attr({'src': 'img/'+name+'_1.png'}):body.attr({'src': 'img/'+name+'.png'});
@@ -261,7 +295,7 @@
 	};
 
 	var setSimSpeed = function(speed){
-		simspeed=speed;
+		simspeed=100-speed;
 	};
 
 	var runSimulation = function(){	
@@ -282,6 +316,30 @@
 		simref = setTimeout(runSimulation,simspeed);
 	};
 
+	
+	/*re arranging components, so that components with same name, doest not adjacent 
+	*/
+	var reOrderComponents = function(){
+		for(var i=0;i<components.length-1;i++){
+			var c1 = components[i],c2,k=i+1;
+			for(var j=i+1;j<components.length;j++){
+				c2 = components[j];
+				if(c1.name !== c2.name){k=j;break;}
+			}			
+			swap(components,i+1,k);	
+		}
+	};
+
+	
+	var swap = function(list, i, j){
+		var temp = list[i];list[i]=list[j];list[j]=temp;
+	};	
+	
+	
+	var startSim = function(){				
+		runSimulation();
+	};
+	
 	var stopSim = function(){
 		clearTimeout(simref);
 	};
@@ -290,7 +348,7 @@
 		modes:modes,		
 		setMode:setMode,
 		setSimSpeed:setSimSpeed,
-		startSim:runSimulation,
+		startSim:startSim,
 		stopSim:stopSim,
 		setPosition:setPosition,
 		createComponent:createComponent,
@@ -299,7 +357,8 @@
 		wires:wires,
 		components:components,
 		clean:clean,
-		executeCode:executeCode
+		executeCode:executeCode,
+		reOrderComponents:reOrderComponents
 	};
 
 }());

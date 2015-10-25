@@ -6,6 +6,9 @@
 				output[i].state = state;
 			}
 		},
+		readInputWire:function(component, pinId, defaultVal){
+			return component.pins[pinId]?component.pins[pinId][0].state:defaultVal;
+		},
 		inherit:function(child, parent){
 			child.prototype = Object.create(parent.prototype);
 			child.prototype.constructor = child;
@@ -63,6 +66,9 @@
 	util.inherit(PULSER, Component);
 	
 	
+	
+	
+	
 	var BULB = function(){
 		Component.call(this,'BULB');
 		this.update = function(){
@@ -71,6 +77,16 @@
 		};
 	};
 	util.inherit(BULB, Component);	
+	
+	
+	var SEVENSEG = function(){
+		Component.call(this,'SEVENSEG');
+	};
+	util.inherit(SEVENSEG, Component);	
+	
+	
+	
+	
 	
 	var GATE = function(name){
 		Component.call(this,name);
@@ -171,30 +187,58 @@
 			util.opdateOutputWires(q2, !q);	
 			return this;
 		},
-		'4017':function(){
+		'4017':function(){//decade counter-ring counter
 			//pins outputs 0-9, clk:10, enable:11, reset:12, carryout:13
-			var q1 = this.pins[0];//output node
-			var q2 = this.pins[1];//output node		
-			var clk = this.pins[10]?this.pins[10][0].state:true;			
-			if(!this.counter)this.counter=0;				
+			var reset = util.readInputWire(this, 12, false);
+			var enable = util.readInputWire(this, 11, true);
+			var clk = util.readInputWire(this, 10, true);			
+			if(!this.counter)this.counter=0;
+			if(reset)this.counter=0;
 			if(this.clk && !clk){//falling edge
 				for(var i=0;i<10;i++){
 					util.opdateOutputWires(this.pins[i], this.counter==i);
-				}
-				this.counter = (this.counter+1)%10;				
-			}			
+				}				
+				if(enable){
+					if(this.counter==5){
+						util.opdateOutputWires(this.pins[13], false);
+					}else if(this.counter==0){
+						util.opdateOutputWires(this.pins[13], true);
+					}
+					this.counter = (this.counter+1)%10;				
+				} 
+			}		
 			this.clk =clk;//updating clock						
 			return this;	
-		}		
-	};		
+		},
+		'4543':function(){//bcd to 7-seg display driver
+			
+		},
+		'4520':function(){//dual 4-bit counter
+			//0:clk, 1-7:upperline, 8-14:lowerline
+			var reset = util.readInputWire(this, 8, false);
+			var clk = util.readInputWire(this, 0, true);			
+			if(!this.counter)this.counter=0;
+			if(reset)this.counter=0;
+			if(this.clk && !clk){//falling edge
+				util.opdateOutputWires(this.pins[1], !!((this.counter >> 3) & 1));
+				util.opdateOutputWires(this.pins[2], !!((this.counter >> 2) & 1));
+				util.opdateOutputWires(this.pins[3], !!((this.counter >> 1) & 1));
+				util.opdateOutputWires(this.pins[4], !!((this.counter >> 0) & 1));				
+				this.counter = (this.counter+1)%16;				 
+			}		
+			this.clk =clk;//updating clock						
+			return this;	
+		}
+	};
+	
+	
 	var componentRegister={
 		'WIRE':WIRE,
 		'SWITCH':SWITCH,
 		'PULSER':PULSER,
 		'BULB':BULB,
 		'PULSER':PULSER,
-		'GATE':GATE
-		
+		'GATE':GATE		
 	};	
 	window.dlcore = {
 		createComponent:function(type, name){

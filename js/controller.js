@@ -15,14 +15,14 @@ $(function(){
 	dl.setMode(dl.modes.WIREMODE);
 });
 $('#simspeed').change(function(){	
-	dl.setSimSpeed(1000-$(this).val())
+	dl.setSimSpeed($(this).val())
 });
 
 $('.stop').click(function(){
 	dl.stopSim();
 	$(this).hide();$('.run').show();
 });
-$('.run').click(function(){
+$('.run').click(function(){	
 	dl.startSim();
 	$(this).hide();$('.stop').show();
 });
@@ -50,7 +50,7 @@ $('.example').click(function(e){
 
 
 $(document).contextmenu({
-	delegate: ".component",
+	delegate: ".component,.wire",
 	preventContextMenuForPopup: true,
 	preventSelect: true,
 	taphold: true,

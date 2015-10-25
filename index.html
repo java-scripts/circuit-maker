@@ -32,11 +32,10 @@
 		</header>
 		
 		<main>
-			<div class="container">
-				<div class="row" id="scrollcontainer">					
-					<div class="col s10 m10 l10">
-						 <hr>
-						  <ul id="dropdown1" class="dropdown-content">
+			<div id="holder"></div>
+				
+				<div class="row">
+					 <ul id="dropdown1" class="dropdown-content">
 							  <li><a class="open" href="#">Open</a></li>
 								<li class="divider"></li>
 							  <li><a class="saveas" href="#">SaveAs</a></li>		  
@@ -47,29 +46,28 @@
 							   <li><a href="#" class="example" id="example3">4017-Decade Counter</a></li>	
 							  <li class="divider"></li>			  
 							</ul>
-						  <nav>
-							<div class="nav-wrapper teal lighten-2">							  
-							   <ul  class="left hide-on-med-and-down">
-								<li><input type="range" min="0" max="1000" step=="5" id="simspeed"></li>
-								 <li><button class="btn run purple darken-2">RUN</button>
-									<button class="btn stop red darken-4" style="display:none;">STOP</button>
-								</li>								
-							  </ul>	
-							  <ul  class="right hide-on-med-and-down">		
-								<li><a class="dropdown-button" href="#!" data-activates="dropdown1">File</a></li>
-								<li><a class="dropdown-button" href="#!" data-activates="dropdown2">Examples</a></li>								
-							  </ul>							 					 
-							</div>
-						  </nav>				
-						  <hr>
-						<!--<h3> Work Bench </h3>-->
-						<div class="feed-carousel" class="worksheet">									
-							<div id="holder" class="feed-carousel-shelf purple lighten-4 " style="width:100%;height:600px;padding:10px">		
-							</div>							
+					<div class="col s12 m12 l12">
+					<nav>						  
+						<div class="nav-wrapper teal lighten-2">							  							  
+						  <ul  class="right hide-on-med-and-down">		
+							<li><a class="dropdown-button" href="#!" data-activates="dropdown1">File</a></li>
+							<li><a class="dropdown-button" href="#!" data-activates="dropdown2">Examples</a></li>
+						  </ul>							 					 
 						</div>
+					  </nav>
+					</div>						
+				</div>
+				 <div class="row">							
+					<div class="col s2 m2 l2">		
+						<button class="btn run purple darken-2">RUN</button>
+						<button class="btn stop red darken-4" style="display:none;">STOP</button>
 					</div>
-					<div class="col s2 m2 l2">						
-						<ul class="collapsible" data-collapsible="accordion">
+					<div class="col s10 m10 l10">							
+						<input type="range" min="0" max="100" step=="10" value="50" id="simspeed">
+					</div>							
+				  </div>	
+				  <div id="components-dropdown">						
+					<ul class="collapsible" data-collapsible="accordion">
 						<li>
 						  <div class="collapsible-header">Basic</div>						  
 						  <div class="collapsible-body">
@@ -108,17 +106,18 @@
 						  <div class="collapsible-body">
 							<div class="gate-cart">																		
 								<img class="gate" src="img/nav/4017.png"  gatetype="GATE" name="4017" ></img>
+								<img class="gate" src="img/nav/4520.png"  gatetype="GATE" name="4520" ></img>
+								<!--<img class="gate" src="img/nav/4543.png"  gatetype="GATE" name="4543" ></img>-->
 							</div>
 						  </div>
 						</li>
 					  </ul>
-					</div>				
-				</div>					
-			</div>	
+					</div>
+			
 			<input type="file" id="fileopen" style="display:none;" >
 		</main>		
 		
-		 <footer class="page-footer">
+		 <footer class="page-footer" style="display:none;">
           <div class="container">		  
             <div class="row">
               <div class="col l6 s12">
